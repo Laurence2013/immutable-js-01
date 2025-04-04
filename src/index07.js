@@ -4,12 +4,13 @@
   desc-02: Example 4: Zipping and filtering OrderedMaps.
   desc-03: Example 1: Filtering an OrderedMap. No RxJs here just pure Immutable.js OrderedMap() and its filter() method
   desc-04: Example 3: Using RxJS zip() and filter().
+  desc-05: Example 3: Explicitly setting V (less common if inference works)
 	goals:
 */
 // @flow
 const {Stack, Map, List, OrderedMap, fromJS} = require('immutable');
 const {of, interval, from, zip, Observable, EMPTY} = require('rxjs');
-const {tap, map, filter, take, reduce} = require('rxjs/operators');
+const {tap, map, filter, take, reduce, flatMap} = require('rxjs/operators');
 
 // desc-01
 const items$ = of(OrderedMap({ item1: { price: 10, quantity: 2 }, item2: { price: 20, quantity: 1 } }));
@@ -56,11 +57,11 @@ const keys$ = from(['a', 'b', 'c', 'd', 'e']);
 const values$ = from([1, 2, 3, 4, 5]);
 const result02$ = zip(keys$, values$).pipe(
   map(pair => OrderedMap([pair])),
-  //map(orderedMap => orderedMap.filter(val => val % 2 === 0)),
+  map(orderedMap => orderedMap.filter(val => val % 2 === 0)),
   map(obj99 => obj99.toJS())
 );
 const result02a$ = zip(keys$, values$).pipe(
-  map(val99 => OrderedMap(val99)),
+  map(val99 => OrderedMap([val99])),
   map(val98 => val98.toJS())
 );
 const result02b$ = zip(keys$, values$).pipe(
@@ -69,5 +70,28 @@ const result02b$ = zip(keys$, values$).pipe(
 const result02c$ = zip(keys$, values$, (keys, values) => { 
   return {keys, values} 
 });
-result02$.subscribe(console.log);
-//result02a$.subscribe(val99 => console.log(val99.toJS()));
+// result02c$.subscribe(console.log);
+
+// desc-05
+const inputObj00$ = of({
+  'user1': { id: 101, role: 'admin' },
+  'user2': { id: 102, role: 'editor' }
+});
+const inputObj01$ = of({
+  'user3': { id: 103, role: 'admin' },
+  'user4': { id: 104, role: 'editor' }
+});
+const result03$ = zip(inputObj00$, inputObj01$).pipe(
+  map(obj99 => OrderedMap(obj99.id)),
+  map(obj98 => obj98.toJS())
+);
+const result03a$ = zip(inputObj00$, inputObj01$).pipe(
+  map(obj99 => OrderedMap(obj99[0])),
+  map(obj97 => obj97.get('user2'))
+);
+const result03b$ = zip(inputObj00$, inputObj01$).pipe(
+  flatMap(obj99 => obj99),
+  map(obj98 => OrderedMap(obj98)),
+  map(obj97 => obj97.get('user2')),
+);
+result03b$.subscribe(console.log);

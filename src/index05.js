@@ -3,7 +3,7 @@
   desc-01: immutable-map, immutable-map-getIn, rxjs-map
 	goals:
 */
-// @flow
+
 const {Stack, Map, List, fromJS} = require('immutable');
 const {of, from, Observable, EMPTY} = require('rxjs');
 const {tap, map, filter, expand, toArray, take, takeWhile, mergeMap} = require('rxjs/operators');
