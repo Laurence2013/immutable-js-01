@@ -55,8 +55,9 @@ const result01 = myOrderedMap.filter((val, key) => val % 2 === 0 && key !== 'd')
 const keys$ = from(['a', 'b', 'c', 'd', 'e']);
 const values$ = from([1, 2, 3, 4, 5]);
 const result02$ = zip(keys$, values$).pipe(
-  map(pair => OrderedMap(pair)),
-  map(orderedMap => orderedMap.filter(val => val % 2 === 0))
+  map(pair => OrderedMap([pair])),
+  //map(orderedMap => orderedMap.filter(val => val % 2 === 0)),
+  map(obj99 => obj99.toJS())
 );
 const result02a$ = zip(keys$, values$).pipe(
   map(val99 => OrderedMap(val99)),
@@ -68,5 +69,5 @@ const result02b$ = zip(keys$, values$).pipe(
 const result02c$ = zip(keys$, values$, (keys, values) => { 
   return {keys, values} 
 });
-result02b$.subscribe(console.log);
+result02$.subscribe(console.log);
 //result02a$.subscribe(val99 => console.log(val99.toJS()));
